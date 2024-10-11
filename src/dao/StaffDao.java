@@ -68,6 +68,7 @@ public class StaffDao extends Dao {
 		return staff;
 	}
 
+
 	/**
 	 * loginメソッド 教員IDとパスワードで認証する
 	 *
@@ -86,5 +87,60 @@ public class StaffDao extends Dao {
 			return null;
 		}
 		return staff;
+
+
+		/**
+		 * changeメソッド 教員IDのパスワードを変更する
+		 *
+		 * @param id:String
+		 *            教員ID
+		 * @param ps:String
+		 *            教員パスワード
+		 * @return 成功:true, 失敗:false
+		 * @throws Exception
+		 */
 	}
+
+	public Integer change(String staff_id, String password) throws Exception {
+
+		// コネクションを確立
+		Connection connection = getConnection();
+		// プリペアードステートメント
+		PreparedStatement statement = null;
+
+		Integer rSet;
+
+		try {
+			// プリペアードステートメントにSQL文をセット
+			statement = connection.prepareStatement("update staff set password=? where staff_id=?");
+			// プリペアードステートメントに教員ID・パスワードをバインド
+			statement.setString(2, staff_id);
+			statement.setString(1, password);
+			// プリペアードステートメントを実行
+			rSet = statement.executeUpdate();
+
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			// プリペアードステートメントを閉じる
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException sqle) {
+					throw sqle;
+				}
+			}
+			// コネクションを閉じる
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException sqle) {
+					throw sqle;
+				}
+			}
+		}
+
+		return rSet;
+	}
+
 }
